@@ -3,12 +3,13 @@
 //check winner on click
 
 const IMAGE_MODE = "image" //text or image
+const searchurl = 'https://api.scryfall.com/cards/random';
 
 var card_array = []
 var card_current = 0
 var can_guess = true
 var score_current = 0
-var score_high = JSON.parse(localStorage.getItem("score_high") || "0");
+var score_high = localStorage.getItem("score_high") || "0";
 
 function getCards(url) {
     let xmlHttpReq = new XMLHttpRequest();
@@ -27,10 +28,9 @@ function getList(numberOfCards) {
         //     if (card_array[k].edhrec_rank == result.edhrec_rank) {i--; continue aLoop}
         // }
         card_array.push(result)
+        addCardToWindow(card_array[i], i)
     }
 }
-
-var searchurl = 'https://api.scryfall.com/cards/random';
 
 function addCardToWindow(card, idee) {
     cardwindow = document.getElementById('card-window');
@@ -53,9 +53,9 @@ function addCardToWindow(card, idee) {
         textImg.setAttribute('onclick', 'guess(this.id)')
         slide.appendChild(textImg)
     }
-    const slideName = document.createElement('div');
-    slideName.textContent = card.name
-    slide.appendChild(slideName)
+    // const slideName = document.createElement('div');
+    // slideName.textContent = card.name
+    // slide.appendChild(slideName)
     
     const slideScore = document.createElement('div');
     slideScore.setAttribute('id', "score" + idee);
@@ -64,6 +64,7 @@ function addCardToWindow(card, idee) {
     slide.appendChild(slideScore)
 
     cardwindow.appendChild(slide)
+    console.log('added slide')
 }
 
 function guess(card) {
@@ -71,22 +72,23 @@ function guess(card) {
     let card_guess, card_other
     let slidenum = card_current + 1
     if (card == card_current) {
-        card_guess = card_array[card_current].edhrec_rank
-        card_other = card_array[slidenum].edhrec_rank
+        card_guess = card_array[card_current]
+        card_other = card_array[slidenum]
     } else {
-        card_guess = card_array[slidenum].edhrec_rank
-        card_other = card_array[card_current].edhrec_rank
+        card_guess = card_array[slidenum]
+        card_other = card_array[card_current]
     }
 
     document.getElementById('score' + card_current).style.opacity = 1;
     document.getElementById('score' + slidenum).style.opacity = 1;
 
-    if (card_guess < card_other) {
+    if (card_guess.edhrec_rank < card_other.edhrec_rank) {
         score_current ++
         document.getElementById('score').textContent = `Score: ${score_current}`
         document.getElementById('score').style.color = "green";
     } else {
         document.getElementById('score').style.color = "red";
+        gameOver(card_guess)
     }
 
 
@@ -95,19 +97,66 @@ function guess(card) {
         console.log('scroll' + card_current)
         let scrollnum = card_current + 1
         document.getElementById("slide" + scrollnum).scrollIntoView({behavior: 'smooth'});
-    } else {can_guess = false} //TODO: end function
+    } else {
+        start('keep')
+    } //TODO: end function
 }
 
-function start() {
+function gameOver(card_guess){
+    can_guess = false
+    let cardwindow = document.getElementById('card-window');
+    document.getElementById('score').textContent = ``;
+    cardwindow.innerHTML = '';
+    
+    let window = document.createElement('div');
+    window.classList.add('game-over'); 
+
+        const slide = document.createElement('div');
+        const card = card_guess
+        slide.classList.add('slide'); 
+
+        const img = document.createElement('img')
+        img.classList.add('slide-img'); 
+        img.src = card.image_uris.normal; //small, normal, large?
+        img.onclick = function(e) {
+            document.location = card_guess.related_uris.edhrec;
+          }
+        slide.appendChild(img)
+
+        const slideScore = document.createElement('div');
+        slideScore.textContent = 'Rank: ' + card.edhrec_rank
+        slide.appendChild(slideScore)
+
+        cardwindow.appendChild(slide)
+    
+        const game_over_title = document.createElement('H1');
+        const game_over_score = document.createElement('div');
+
+        if (score_current >= score_high) {
+        localStorage.setItem("score_high", score_current);
+        score_high = score_current
+        game_over_title.textContent = 'New High Score!'
+        game_over_score.textContent = `Your scored a new personal best of ${score_current} points`
+        } else {
+        game_over_title.textContent = 'Game Over!'
+        game_over_score.textContent = `Your scored ${score_current} points and your best score was ${score_high}`
+        }
+
+        window.appendChild(game_over_title)
+        window.appendChild(game_over_score)
+    
+    cardwindow.appendChild(window)
+}
+
+function start(zero) {
+
+    if (zero !== 'keep') {score_current = 0}
     document.getElementById('card-window').innerHTML = '';
     card_current = 0
-    score_current = 0
+    document.getElementById('score').textContent = `Score: ${score_current}`
     card_array = []
     can_guess = true
     getList(10)
-    for (let i = 0; i < card_array.length; i++) {
-        addCardToWindow(card_array[i], i)
-    }
     document.getElementById("slide0").scrollIntoView({behavior: 'smooth'});
 }
 
