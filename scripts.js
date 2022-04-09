@@ -131,19 +131,24 @@ function gameOver(card_guess){
     
         const game_over_title = document.createElement('H1');
         const game_over_score = document.createElement('div');
+        const game_over_best = document.createElement('div');
 
         if (score_current >= score_high) {
         localStorage.setItem("score_high", score_current);
         score_high = score_current
         game_over_title.textContent = 'New High Score!'
-        game_over_score.textContent = `Your scored a new personal best of ${score_current} points`
+        game_over_score.textContent = `You scored a new personal best of ${score_current} point`
+        game_over_score.textContent += (score_current == 1) ? '' : 's';
         } else {
         game_over_title.textContent = 'Game Over!'
-        game_over_score.textContent = `Your scored ${score_current} points and your best score was ${score_high}`
+        game_over_score.textContent = `You scored ${score_current} point`
+        game_over_score.textContent += (score_current == 1) ? '' : 's';
+        game_over_best.textContent = `Your best score was ${score_high}`
         }
 
         window.appendChild(game_over_title)
         window.appendChild(game_over_score)
+        window.appendChild(game_over_best)
     
     cardwindow.appendChild(window)
 }
