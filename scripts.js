@@ -3,6 +3,7 @@
 //check winner on click
 
 const IMAGE_MODE = "image" //text or image
+const TEST_MODE = false //true or false
 const searchurl = 'https://api.scryfall.com/cards/random';
 
 var card_array = []
@@ -16,8 +17,23 @@ function getCards(url) {
     xmlHttpReq.open("GET", url, false); 
     xmlHttpReq.send(null);
     // console.log(xmlHttpReq.responseText)
-    return JSON.parse(xmlHttpReq.responseText);
+    let res = JSON.parse(xmlHttpReq.responseText);
+    var gotCard = {
+        name: res.name,
+        image_normal: res.image_uris.normal,
+        edhrec_rank: res.edhrec_rank,
+
+    }
+    return gotCard
   }
+
+//   function getCards(url) {
+//     let xmlHttpReq = new XMLHttpRequest();
+//     xmlHttpReq.open("GET", url, false); 
+//     xmlHttpReq.send(null);
+//     // console.log(xmlHttpReq.responseText)
+//     return JSON.parse(xmlHttpReq.responseText);
+//   }
 
 function getList(numberOfCards) {
     // aLoop: 
@@ -43,7 +59,7 @@ function addCardToWindow(card, idee) {
         const img = document.createElement('img')
         img.classList.add('slide-img'); 
         img.setAttribute('id', idee);
-        img.src = card.image_uris.normal; //small, normal, large?
+        img.src = card.image_normal; //small, normal, large?
         img.setAttribute('onclick', 'guess(this.id)')
         slide.appendChild(img)
     } else {
@@ -60,7 +76,9 @@ function addCardToWindow(card, idee) {
     const slideScore = document.createElement('div');
     slideScore.setAttribute('id', "score" + idee);
     slideScore.textContent = 'Rank: ' + card.edhrec_rank
+    if (TEST_MODE == false) {
     slideScore.style.opacity = '0';
+    }
     slide.appendChild(slideScore)
 
     cardwindow.appendChild(slide)
@@ -110,6 +128,7 @@ function gameOver(card_guess){
     
     let window = document.createElement('div');
     window.classList.add('game-over'); 
+    window.setAttribute('onclick', 'start()')
 
         const slide = document.createElement('div');
         const card = card_guess
@@ -117,7 +136,7 @@ function gameOver(card_guess){
 
         const img = document.createElement('img')
         img.classList.add('slide-img'); 
-        img.src = card.image_uris.normal; //small, normal, large?
+        img.src = card.image_normal; //small, normal, large?
         img.onclick = function(e) {
             document.location = card_guess.related_uris.edhrec;
           }
