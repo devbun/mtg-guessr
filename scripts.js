@@ -3,6 +3,8 @@
 //Add price mode
 //History tab
 //Settings tab
+//background change at certain intervals
+
 //Responsive design DONEish
 //Keyboard controls? DONEish
 
