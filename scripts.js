@@ -1,6 +1,5 @@
-// fetch selection of cards under certain parameters and return a random card from the selection
-//add card to card array, add card to dom, scroll to new card
-//check winner on click
+//ideas
+//Add timer
 
 const IMAGE_MODE = "image" //text or image
 const TEST_MODE = false //true or false
@@ -12,7 +11,8 @@ var can_guess = true
 var score_current = 0
 var score_high = localStorage.getItem("score_high") || "0";
 
-function getCards(url) {
+
+  function getCards(url) {
     let xmlHttpReq = new XMLHttpRequest();
     xmlHttpReq.open("GET", url, false); 
     xmlHttpReq.send(null);
@@ -20,20 +20,12 @@ function getCards(url) {
     let res = JSON.parse(xmlHttpReq.responseText);
     var gotCard = {
         name: res.name,
-        image_normal: res.image_uris.normal,
+        images: res.image_uris.normal,
         edhrec_rank: res.edhrec_rank,
-
+        related_uris: res.related_uris,
     }
     return gotCard
   }
-
-//   function getCards(url) {
-//     let xmlHttpReq = new XMLHttpRequest();
-//     xmlHttpReq.open("GET", url, false); 
-//     xmlHttpReq.send(null);
-//     // console.log(xmlHttpReq.responseText)
-//     return JSON.parse(xmlHttpReq.responseText);
-//   }
 
 function getList(numberOfCards) {
     // aLoop: 
@@ -59,7 +51,7 @@ function addCardToWindow(card, idee) {
         const img = document.createElement('img')
         img.classList.add('slide-img'); 
         img.setAttribute('id', idee);
-        img.src = card.image_normal; //small, normal, large?
+        img.src = card.images; //small, normal, large?
         img.setAttribute('onclick', 'guess(this.id)')
         slide.appendChild(img)
     } else {
@@ -104,20 +96,22 @@ function guess(card) {
         score_current ++
         document.getElementById('score').textContent = `Score: ${score_current}`
         document.getElementById('score').style.color = "green";
+
+        card_current ++;
+        if (card_current < card_array.length - 1) {
+            console.log('scroll' + card_current)
+            let scrollnum = card_current + 1
+            document.getElementById("slide" + scrollnum).scrollIntoView({behavior: 'smooth'});
+        } else {
+            start('keep')
+        }
     } else {
         document.getElementById('score').style.color = "red";
         gameOver(card_guess)
     }
 
 
-    card_current ++;
-    if (card_current < card_array.length - 1) {
-        console.log('scroll' + card_current)
-        let scrollnum = card_current + 1
-        document.getElementById("slide" + scrollnum).scrollIntoView({behavior: 'smooth'});
-    } else {
-        start('keep')
-    } //TODO: end function
+
 }
 
 function gameOver(card_guess){
@@ -136,7 +130,7 @@ function gameOver(card_guess){
 
         const img = document.createElement('img')
         img.classList.add('slide-img'); 
-        img.src = card.image_normal; //small, normal, large?
+        img.src = card.images; //small, normal, large?
         img.onclick = function(e) {
             document.location = card_guess.related_uris.edhrec;
           }
@@ -152,7 +146,7 @@ function gameOver(card_guess){
         const game_over_score = document.createElement('div');
         const game_over_best = document.createElement('div');
 
-        if (score_current >= score_high) {
+        if (score_current >= score_high && score_current !== 0) {
         localStorage.setItem("score_high", score_current);
         score_high = score_current
         game_over_title.textContent = 'New High Score!'
@@ -173,7 +167,6 @@ function gameOver(card_guess){
 }
 
 function start(zero) {
-
     if (zero !== 'keep') {score_current = 0}
     document.getElementById('card-window').innerHTML = '';
     card_current = 0

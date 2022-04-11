@@ -11,6 +11,15 @@ header{
     margin: .5rem;
 }
 
+/* .outer-container {
+    position: absolute;
+    width: 560px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+} */
+
 .card-window {
     display: flex;
     flex-direction: row;
@@ -24,6 +33,20 @@ header{
     box-shadow: 0px 2px 3px #888888;
 }
 
+/* .loading-screen {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    height: 400px;
+    width: 560px;
+    opacity: 5;
+    background-color: gainsboro;
+    z-index: 3;
+} */
+
 .game-over {
     width: 100%;
     display: flex;
@@ -32,6 +55,7 @@ header{
     align-items: center;
     animation: fadeIn 1s;
     margin-right: 1rem;
+    cursor: pointer;
 }
 
 @keyframes fadeIn {
