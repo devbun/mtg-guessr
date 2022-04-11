@@ -11,6 +11,18 @@ header{
     margin: .5rem;
 }
 
+.card-window {
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    border: 2px solid lightgray;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin: 1rem;
+    box-shadow: 0px 4px 6px #888888;
+}
+
+
 .game-over {
     width: 100%;
     display: flex;
@@ -52,23 +64,16 @@ header{
 
   /* @media only screen and (min-width: 401px) and (max-width: 960px)  */
   
-  /* Tablet Styles */
+  /* Mobile Styles */
   @media only screen and (min-width: 0px) and (max-width: 960px) {
     body {
       font-size: 24px;
     }
 
     .card-window {
-        display: flex;
-        flex-direction: row;
-        overflow: hidden;
         height: 70vw;
         width: 100vw;
-        border: 2px solid lightgray;
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-        margin: 1rem;
-        box-shadow: 0px 2px 3px #888888;
+
     }
 
     .slide {
@@ -95,16 +100,9 @@ header{
     }
 
     .card-window {
-        display: flex;
-        flex-direction: row;
-        overflow: hidden;
         height: 400px;
         width: 560px;
-        border: 2px solid lightgray;
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-        margin: 1rem;
-        box-shadow: 0px 2px 3px #888888;
+
     }
 
     .slide {

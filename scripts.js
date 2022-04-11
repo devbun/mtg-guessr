@@ -1,9 +1,13 @@
+
 //--ideas--
 //Add timed mode
 //Add price mode
 //History tab
 //Settings tab
 //background change at certain intervals
+
+//ideas
+//Add timer
 
 //Responsive design DONEish
 //Keyboard controls? DONEish
@@ -33,8 +37,10 @@ var score_high = localStorage.getItem("score_high") || "0";
     let res = JSON.parse(xmlHttpReq.responseText);
     var gotCard = {
         name: res.name,
+
         idee: card_array.length,
         images: (res.image_uris || console.log(res)),
+
         edhrec_rank: res.edhrec_rank,
         related_uris: res.related_uris,
     }
@@ -61,8 +67,10 @@ function addCardToWindow(card) {
     if (image_mode == true) {
         const img = document.createElement('img')
         img.classList.add('slide-img'); 
+
         img.setAttribute('id', card.idee);
         img.src = card.images.normal; //small, normal, large?
+
         img.setAttribute('onclick', 'guess(this.id)')
         slide.appendChild(img)
     } else {
@@ -121,6 +129,7 @@ function guess(card) {
         document.getElementById('score').style.color = "red";
         gameOver(card_guess)
     }
+
 }
 
 function gameOver(card_guess){
@@ -138,7 +147,10 @@ function gameOver(card_guess){
 
         const img = document.createElement('img')
         img.classList.add('slide-img'); 
+
         img.src = card_guess.images.normal; //small, normal, large?
+
+
         img.onclick = function(e) {
             document.location = card_guess.related_uris.edhrec;
           }
