@@ -3,10 +3,7 @@
 //Add price mode
 //History tab
 //Settings tab
-//background change at certain intervals
-
-//ideas
-//Add timer
+//background change at certain intervals (random basics)
 
 //Responsive design DONEish
 //Keyboard controls? DONEish
@@ -16,14 +13,15 @@
 //Double clicking on a card giving you multiple points
 
 const SEARCHURL = 'https://api.scryfall.com/cards/random';
+const SEARCHPLAINS = 'https://api.scryfall.com/cards/random?q=%22plains%22'
 
 //Settings
 var image_mode = true //text or image
-var test_mode = true //true or false
+var test_mode = false //true or false
 var game_mode = 'edh' //edh or usd TODO: make this
 
 //History
-var history = localStorage.getItem("history") || "0";
+var history = JSON.parse(localStorage.getItem("history") || "[]");
 
 var card_array = []
 var card_current = 0
@@ -131,11 +129,20 @@ function guess(card) {
         document.getElementById('score').style.color = "red";
         gameOver(card_guess)
     }
+}
+
+function backgroundChange(background) {
+    let bg = getCards(background).images.art_crop
+    document.body.style.backgroundImage = "url(" + bg + ")";
 
 }
 
 function gameOver(card_guess){
     can_guess = false
+
+    history.push(card_array) 
+    localStorage.setItem("history", JSON.stringify(history));
+
     let cardwindow = document.getElementById('card-window');
     document.getElementById('score').textContent = ``;
     cardwindow.innerHTML = '';
@@ -223,5 +230,9 @@ document.addEventListener('keypress', (event) => {
     document.getElementById("slide" + (card_current + 1)).scrollIntoView;
 
 }, true);
+
+function historyShow(){
+    backgroundChange(SEARCHPLAINS)
+}
 
 start()

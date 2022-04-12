@@ -1,17 +1,36 @@
+:root {
+    --colour-glass: #f5f7f8bd;
+  }
+
 body {
     display: flex;
     justify-content: center;
     flex-direction: column;
     align-items: center;
+
+    background-color: var(--colour-glass);
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-size: cover;
 }
 
 header{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    background-color: var(--colour-glass);
+}
+
+h1{
     font-size: 1.5em;
     font-weight: bold;
     margin: .5rem;
 }
 
 .card-window {
+    background-color: var(--colour-glass);
     display: flex;
     flex-direction: row;
     overflow: hidden;

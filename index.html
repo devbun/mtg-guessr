@@ -3,12 +3,15 @@
   <head>
     <meta charset="utf-8">
     <title>MTG Guessr</title>
+    <meta name="viewport" content="width=device-width">
     <link rel='stylesheet' href='styles.css'/>
     <script src="scripts.js" defer></script>
   </head>
   <body>
-    <header>MTG Guessr</header>
+    <header>
+      <h1>MTG Guessr</h1>
     <div class="description" id="description">Guess which card has a higher EDHREC rank.</div>
+  </header>
 
     <div id="outer-container">
         <div id="card-window" class="card-window">
@@ -19,6 +22,7 @@
 
       <div id="score">Score:</div>
       <div class="restart-btn" id="restart-btn" onclick="start()">Restart</div>
+      <div class="restart-btn" id="history-btn" onclick="historyShow()">History</div>
 
   </body>
 </html>
