@@ -1,4 +1,3 @@
-
 //--ideas--
 //Add timed mode
 //Add price mode
@@ -11,6 +10,10 @@
 
 //Responsive design DONEish
 //Keyboard controls? DONEish
+
+//--BUGS--
+//double faced card? Fixed?
+//Double clicking on a card giving you multiple points
 
 const SEARCHURL = 'https://api.scryfall.com/cards/random';
 
@@ -36,11 +39,10 @@ var score_high = localStorage.getItem("score_high") || "0";
     // console.log(xmlHttpReq.responseText)
     let res = JSON.parse(xmlHttpReq.responseText);
     var gotCard = {
-        name: res.name,
-
+        // layout: "modal_dfc"
+        name: (res.name || res.card_faces[0].name),
         idee: card_array.length,
-        images: (res.image_uris || console.log(res)),
-
+        images: (res.image_uris || res.card_faces[0].image_uris),
         edhrec_rank: res.edhrec_rank,
         related_uris: res.related_uris,
     }
