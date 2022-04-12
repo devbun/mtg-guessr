@@ -8,21 +8,32 @@
     <script src="scripts.js" defer></script>
   </head>
   <body>
-    <header>
+    
+    <header class="frosted">
+      <!-- <div class="options">
+        <span class="options-header">Options</span>
+        <div class="options-content">
+          <span class="option" id="option-image">History</span>
+          <span class="option" id="option-image">Toggle Images</span>
+          <span class="option" id="option-test">Toggle Tests</span>
+          <span class="option" id="option-score">Reset Score</span>
+        </div>
+      </div> -->
       <h1>MTG Guessr</h1>
     <div class="description" id="description">Guess which card has a higher EDHREC rank.</div>
+
   </header>
 
     <div id="outer-container">
-        <div id="card-window" class="card-window">
+        <div id="card-window" class="frosted card-window">
           
         </div>
         <!-- <div id="loading-screen" class="loading-screen">Loading cards...</div> -->
       </div>
 
-      <div id="score">Score:</div>
+      <div class="frosted score" id="score">Score:</div>
       <div class="restart-btn" id="restart-btn" onclick="start()">Restart</div>
-      <div class="restart-btn" id="history-btn" onclick="historyShow()">History</div>
+      <!-- <div class="restart-btn" id="history-btn" onclick="historyShow()">History</div> -->
 
   </body>
 </html>

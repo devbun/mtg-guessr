@@ -1,24 +1,31 @@
 //--ideas--
 //Add timed mode
 //Add price mode
-//History tab
-//Settings tab
-//background change at certain intervals (random basics)
+//Collect backgrounds
 
-//Responsive design DONEish
-//Keyboard controls? DONEish
+//TODO
+//History tab
+//Settings tab? Image mode? test mode? Reset PB
+//Add landscape display?
+
+//Responsive design DONE
+//Keyboard controls? Done
+//background change at certain intervals (random basics) DONE
 
 //--BUGS--
 //double faced card? Fixed?
-//Double clicking on a card giving you multiple points
+//Double clicking on a card giving you multiple points FIXED
+
+screen.orientation.lock('portrait-primary') //This doesn't even work
 
 const SEARCHURL = 'https://api.scryfall.com/cards/random';
-const SEARCHPLAINS = 'https://api.scryfall.com/cards/random?q=%22plains%22'
 
 //Settings
 var image_mode = true //text or image
 var test_mode = false //true or false
 var game_mode = 'edh' //edh or usd TODO: make this
+
+var changing_background = false;
 
 //History
 var history = JSON.parse(localStorage.getItem("history") || "[]");
@@ -87,7 +94,7 @@ function addCardToWindow(card) {
     
     const slideScore = document.createElement('div');
     slideScore.setAttribute('id', "score" + card.idee);
-    slideScore.textContent = 'Rank: ' + card.edhrec_rank
+    slideScore.textContent = 'Rank: ' + card.edhrec_rank.toLocaleString('en-US')
     if (test_mode == false) {
     slideScore.style.opacity = '0';
     }
@@ -115,36 +122,79 @@ function guess(card) {
     document.getElementById('score' + card_current).style.opacity = 1;
     document.getElementById('score' + slidenum).style.opacity = 1;
 
+    document.getElementById('slide' + card_current).classList.add('transparent'); 
+    document.getElementById(card_current).onclick = "";
+
+    document.getElementById('score').textContent = `Score: ${score_current}`
+
     if (card_guess.edhrec_rank < card_other.edhrec_rank) {
         score_current ++
-        document.getElementById('score').textContent = `Score: ${score_current}`
-        document.getElementById('score').style.color = "green";
+        
+
+        if (changing_background == true) {
+            switch (score_current) {
+                case 5:
+                    backgroundChange('plains');
+                    break
+                case 10:
+                    backgroundChange('island');
+                    break
+                case 15:
+                    backgroundChange('swamp');
+                    break
+                case 20:
+                    backgroundChange('mountain');
+                    break
+                case 30:
+                    backgroundChange('forest');
+                    break
+                case 100:
+                    backgroundChange('waste');
+                    break
+                default:
+                    document.body.style.backgroundImage = "";
+                    break
+            }
+        }
 
         card_current ++;
         console.log('scroll' + card_current)
-        let scrollnum = card_current + 1
-        document.getElementById("slide" + scrollnum).scrollIntoView({behavior: 'smooth'});
-        can_guess = true
+        document.getElementById('card-window').scrollTo({
+            top: 0,
+            left: document.getElementById('card-window').scrollWidth,
+            behavior: 'smooth'
+          });
+        setTimeout(function(){ can_guess = true; }, 200)
     } else {
-        document.getElementById('score').style.color = "red";
-        gameOver(card_guess)
+        setTimeout(function(){ gameOver(card_guess); }, 600)
     }
 }
 
-function backgroundChange(background) {
-    let bg = getCards(background).images.art_crop
+function backgroundChange(land) {
+    let background = 'https://api.scryfall.com/cards/search?as=grid&order=released&q=%21' + land + '+include%3Aextras&unique=prints'
+    console.log(background)
+    let xmlHttpReq = new XMLHttpRequest();
+    xmlHttpReq.open("GET", background, false); 
+    xmlHttpReq.send(null);
+    let res = JSON.parse(xmlHttpReq.responseText);
+
+    let gotcard = res.data
+    num = Math.floor(Math.random() * gotcard.length);
+    let bg = gotcard[num].image_uris.art_crop || "";
     document.body.style.backgroundImage = "url(" + bg + ")";
 
 }
 
-function gameOver(card_guess){
-    can_guess = false
+function addHistory() {
+    //TODO
+}
 
-    history.push(card_array) 
-    localStorage.setItem("history", JSON.stringify(history));
+function gameOver(card_guess){
+
+    // history.push(card_array) 
+    // localStorage.setItem("history", JSON.stringify(history));
 
     let cardwindow = document.getElementById('card-window');
-    document.getElementById('score').textContent = ``;
     cardwindow.innerHTML = '';
     
     let window = document.createElement('div');
@@ -166,7 +216,7 @@ function gameOver(card_guess){
         slide.appendChild(img)
 
         const slideScore = document.createElement('div');
-        slideScore.textContent = 'Rank: ' + card_guess.edhrec_rank
+        slideScore.textContent = 'Rank: ' + card_guess.edhrec_rank.toLocaleString('en-US')
         slide.appendChild(slideScore)
 
         cardwindow.appendChild(slide)
@@ -196,43 +246,50 @@ function gameOver(card_guess){
 }
 
 function start(zero) {
+    document.body.style.backgroundImage = "";
+
     if (zero !== 'keep') {score_current = 0}
     document.getElementById('card-window').innerHTML = '';
     card_current = 0
     document.getElementById('score').textContent = `Score: ${score_current}`
     card_array = []
     can_guess = true
-    getList(5)
-    document.getElementById("slide0").scrollIntoView({behavior: 'smooth'});
+    getList(2)
+    document.getElementById('card-window').scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+      });
 }
 
 document.addEventListener('keypress', (event) => {
-    var name = event.code;
+    var name = event.key;
     console.log(name)
 
-    if (['ShiftLeft', 'ArrowLeft', 'Digit0', 'Numpad1'].includes(name)) {
-        guess(card_array[card_current])
+    if (['ArrowLeft', 'q'].includes(name)) {
+        guess(card_array.length - 2)
     }
 
-    if (['ShiftRight', 'ArrowRight', 'Digit1', 'Numpad2', 'Numpad3'].includes(name)) {
-        guess(card_array[card_current] + 1)
+    if (['ArrowRight', 'w'].includes(name)) {
+        guess(card_array.length - 1)
     }
 
-    if (['Space', 'KeyR'].includes(name)) {
+    if (['Space', 'r'].includes(name)) {
         start()
     }
 
   }, false);
 
   window.addEventListener('resize', function(event) { //TODO: Fix this
-    document.getElementById('slide0').scrollIntoView;
-    document.getElementById("slide" + card_current).scrollIntoView;
-    document.getElementById("slide" + (card_current + 1)).scrollIntoView;
-
+    document.getElementById('card-window').scrollTo({
+        top: 0,
+        left: document.getElementById('card-window').scrollWidth,
+        behavior: 'smooth'
+      });
 }, true);
 
 function historyShow(){
-    backgroundChange(SEARCHPLAINS)
+    backgroundChange('Swamp')
 }
 
 start()
